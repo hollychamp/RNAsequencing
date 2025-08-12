@@ -49,3 +49,31 @@ cd genome1
 featureCounts -a genome1.gtf -o genome1_counts.txt -T 4 -s 2 -p -B -C -g gene_id -O -f -F GTF -t transcript genome1T1Aligned.out.sam 
 cd ..
 ```
+
+**Step 4: EdgeR gene expression analysis**
+Load the appropriate packages 
+```
+library(Rsubread)
+library(rtracklayer)
+library(dplyr)
+library(tidyr)
+library(edgeR)
+```
+
+Read the counts file and remove the first 5 columns of gene annotation
+
+```
+counts_genome1 <- read.table("genome1_counts.txt", header = TRUE, row.names = 1, sep = "\t")
+head(counts_genome1)
+counts_data_genome1 <- counts_genome1[, -c(1:5)]
+```
+Make a DGElist data class depending on treatment for each sample in the counts file 
+
+group_1 <- c("NT", "NT", "NT", "T", "T", "T")
+dge_1 <- DGEList(counts<-counts_data_genome1, group = group1)
+```
+Filter out lowly expressed genes
+
+```
+keep_1 <- filterByExpr(dge_1)
+dge1 <- dge_1[keep, , keep.lib.sizes=FALSE]
