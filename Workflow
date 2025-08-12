@@ -1,1 +1,5 @@
-
+Convert .gff files provided by microbesNG to .gtf files so they can be used with STAR
+<details>
+<summary>Note</summary>
+This .gtf file does not carry over uniprotKB annotations but they will be merged in later steps in R
+</details>
