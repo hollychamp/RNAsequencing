@@ -68,7 +68,7 @@ head(counts_genome1)
 counts_data_genome1 <- counts_genome1[, -c(1:5)]
 ```
 Make a DGElist data class depending on treatment for each sample in the counts file 
-
+```
 group_1 <- c("NT", "NT", "NT", "T", "T", "T")
 dge_1 <- DGEList(counts<-counts_data_genome1, group = group1)
 ```
@@ -76,4 +76,28 @@ Filter out lowly expressed genes
 
 ```
 keep_1 <- filterByExpr(dge_1)
-dge1 <- dge_1[keep, , keep.lib.sizes=FALSE]
+dge_1 <- dge_1[keep, , keep.lib.sizes=FALSE]
+```
+Normalise library sizes to minimise log-fold changes between samples of most genes 
+_Below uses edgeR's default method of trimmed mean of M-values (TMM) between each pair of samples and is recommended if least half of the genes in your RNAseq data are likely to not be differentially expressed_
+
+```
+dge_1 <- normLibSizes(dge_1)
+```
+
+Create an MDS plot of each sample to check for outliers 
+```
+label_colors <- c(rep("red", 3), rep("blue", 3))
+plotMDS(dge_1, labels=c("G1_NT1", "G1_NT3", "G1_NT4", "G1_T1", "G1_T3", "G1_T4"), cex = 1.25, col = label_colors)
+```
+Estimate dispersion 
+_This is needed to be able for the following steps_
+```
+design_1 <- model.matrix(~group_1)
+dge_1 <- estimateDisp(dge_1, design_1)
+```
+_Optional: plot the dispersion_
+```
+plotBCV(dge_1)
+```
+
