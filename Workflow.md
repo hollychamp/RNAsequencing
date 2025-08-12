@@ -91,7 +91,7 @@ label_colors <- c(rep("red", 3), rep("blue", 3))
 plotMDS(dge_1, labels=c("G1_NT1", "G1_NT3", "G1_NT4", "G1_T1", "G1_T3", "G1_T4"), cex = 1.25, col = label_colors)
 ```
 Estimate dispersion 
-_This is needed to be able for the following steps_
+_This is needed to be able fit the quasi-likelihood negative binomal generalised linear model_
 ```
 design_1 <- model.matrix(~group_1)
 dge_1 <- estimateDisp(dge_1, design_1)
@@ -100,4 +100,16 @@ _Optional: plot the dispersion_
 ```
 plotBCV(dge_1)
 ```
-
+Use trended NB dispersion and fit the QL GLM
+```
+fit_1 <- glmQLFit(dge_1, design_1)
+```
+Use the quasi-likelihood f-test to determine differential expression 
+_'coef' specifies which group you would like to test for differential gene expression, below I used coef = 2 to test whether the treated samples (second line in my design matrix) is significantly different from the baseline (group 1)_
+```
+DE_1 <- glmQLFTest(fit_1, coef = 2)
+```
+Use the Benjamini-Hochberg procedure to adjust p-values for all genes - these adjusted p-values will be the False Discovery Rate
+```
+DE_1$table$FDR <- p.adjust(DE_1$table$PValue, method = 'BH')
+```
