@@ -59,6 +59,7 @@ library(rtracklayer)
 library(dplyr)
 library(tidyr)
 library(edgeR)
+library(ggplot2)
 ```
 
 Read the counts file and remove the first 5 columns of gene annotation
